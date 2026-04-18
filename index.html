@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Accidentalidad Barranquilla</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.0/plotly.min.js"></script>
+  <style>
+    :root{
+      --bg:#fff;--bg2:#f7f8fa;--bg3:#f0f2f5;
+      --border:#e8eaed;--border2:#d1d5db;
+      --text:#0d1117;--text2:#4b5563;--text3:#9ca3af;
+      --blue:#1a56db;--blue2:#0e3a8c;--blue-soft:#eff4ff;
+      --red:#dc2626;--red-soft:#fef2f2;
+      --orange:#d97706;--orange-soft:#fffbeb;
+      --green:#059669;--green-soft:#ecfdf5;
+      --r:12px;--r2:8px;
+      --sh2:0 4px 20px rgba(0,0,0,.08),0 1px 4px rgba(0,0,0,.04);
+      --sh3:0 12px 40px rgba(0,0,0,.1),0 4px 12px rgba(0,0,0,.06);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+    /* LOADER */
+    #loader{position:fixed;inset:0;background:#fff;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;transition:opacity .5s,visibility .5s}
+    #loader.hide{opacity:0;visibility:hidden;pointer-events:none}
+    .ld-logo{font-family:'DM Serif Display',serif;font-size:1.6rem;letter-spacing:-.5px}
+    .ld-logo span{color:var(--blue)}
+    .ld-bar{width:180px;height:2px;background:var(--border);border-radius:99px;overflow:hidden}
+    .ld-fill{height:100%;width:0;background:var(--blue);border-radius:99px;animation:ldfill 1.8s ease forwards}
+    @keyframes ldfill{to{width:100%}}
+
+    /* NAV */
+    nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.93);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 2.5rem;height:58px;display:flex;align-items:center;justify-content:space-between}
+    .nav-brand{display:flex;align-items:center;gap:.65rem}
+    .nav-dot{width:8px;height:8px;border-radius:50%;background:var(--blue)}
+    .nav-name{font-family:'DM Serif Display',serif;font-size:1.05rem;letter-spacing:-.2px}
+    .nav-name em{color:var(--blue);font-style:normal}
+    .nav-right{display:flex;align-items:center;gap:1.25rem}
+    .nav-tag{font-size:.7rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);border:1px solid var(--border2);border-radius:99px;padding:.2rem .75rem}
+    .nav-status{display:flex;align-items:center;gap:.4rem;font-size:.72rem;color:var(--text3)}
+    .s-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;animation:pulse 2s ease-in-out infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+    /* HERO */
+    .hero{padding:3.5rem 2.5rem 2.5rem;max-width:1160px;margin:0 auto;opacity:0;transform:translateY(18px);animation:fu .7s .1s ease forwards}
+    @keyframes fu{to{opacity:1;transform:translateY(0)}}
+    .eyebrow{display:inline-flex;align-items:center;gap:.45rem;font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);background:var(--blue-soft);border:1px solid #c7d7f9;border-radius:99px;padding:.28rem .85rem;margin-bottom:1.1rem}
+    .hero h1{font-family:'DM Serif Display',serif;font-size:2.8rem;font-weight:400;line-height:1.15;letter-spacing:-.4px;margin-bottom:.7rem}
+    .hero h1 em{font-style:italic;color:var(--blue)}
+    .hero-desc{font-size:.88rem;color:var(--text2);max-width:520px;line-height:1.65}
+    .hero-desc a{color:var(--blue);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+    .hero-desc a:hover{border-color:var(--blue)}
+
+    .content{max-width:1160px;margin:0 auto;padding:0 2.5rem 5rem}
+
+    /* KPI */
+    .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem;opacity:0;transform:translateY(14px);animation:fu .6s .35s ease forwards}
+    .kpi{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem 1.4rem 1.25rem;position:relative;overflow:hidden;transition:box-shadow .2s,transform .2s}
+    .kpi::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px}
+    .kpi.k1::after{background:var(--blue)}.kpi.k2::after{background:var(--orange)}
+    .kpi.k3::after{background:var(--green)}.kpi.k4::after{background:var(--red)}
+    .kpi:hover{box-shadow:var(--sh3);transform:translateY(-2px)}
+    .kpi-ico{position:absolute;top:1.15rem;right:1.15rem;width:34px;height:34px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;font-size:.95rem}
+    .k1 .kpi-ico{background:var(--blue-soft)}.k2 .kpi-ico{background:var(--orange-soft)}
+    .k3 .kpi-ico{background:var(--green-soft)}.k4 .kpi-ico{background:var(--red-soft)}
+    .kpi-lbl{font-size:.65rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);margin-bottom:.7rem}
+    .kpi-num{font-family:'DM Serif Display',serif;font-size:2.4rem;font-weight:400;line-height:1;margin-bottom:.35rem}
+    .k1 .kpi-num{color:var(--blue2)}.k2 .kpi-num{color:var(--orange)}
+    .k3 .kpi-num{color:var(--green)}.k4 .kpi-num{color:var(--red)}
+    .kpi-sub{font-size:.71rem;color:var(--text3)}
+
+    #err-box{display:none;background:var(--red-soft);border:1px solid #fca5a5;border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:1.5rem;font-size:.83rem;color:#7f1d1d}
+
+    /* CHARTS ROW */
+    .g2{display:grid;grid-template-columns:1.55fr 1fr;gap:1.25rem;margin-bottom:1.25rem;opacity:0;transform:translateY(14px);animation:fu .6s .55s ease forwards}
+    .cc{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:box-shadow .2s}
+    .cc:hover{box-shadow:var(--sh2)}
+    .cc-head{padding:1.3rem 1.5rem .9rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
+    .cc-ey{font-size:.64rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:.28rem}
+    .cc-title{font-size:.96rem;font-weight:600;color:var(--text);line-height:1.3}
+    .cc-sub{font-size:.74rem;color:var(--text3);margin-top:.2rem;line-height:1.45}
+    .cc-pill{flex-shrink:0;background:var(--bg3);border:1px solid var(--border2);border-radius:99px;padding:.18rem .7rem;font-size:.67rem;font-weight:500;color:var(--text2);white-space:nowrap}
+    .cc-body{padding:1.25rem 1.5rem 1.5rem}
+    .no-data{display:flex;align-items:center;justify-content:center;height:160px;color:var(--text3);font-size:.82rem;font-style:italic}
+
+    /* RECORDS CARD with scrollable list */
+    .rec-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:2.5rem;opacity:0;transform:translateY(14px);animation:fu .6s .7s ease forwards}
+    .rec-scroll{overflow-y:auto;max-height:420px}
+    .rec-scroll::-webkit-scrollbar{width:6px}
+    .rec-scroll::-webkit-scrollbar-track{background:var(--bg2)}
+    .rec-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+
+    /* Table inside scroll */
+    table{width:100%;border-collapse:collapse;font-size:.82rem}
+    thead{position:sticky;top:0;z-index:2}
+    thead tr{background:var(--blue)}
+    thead th{padding:.75rem 1.25rem;text-align:left;font-size:.67rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#fff;white-space:nowrap}
+    thead th:first-child{width:42px;text-align:center}
+    tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+    tbody tr:last-child{border-bottom:none}
+    tbody tr:hover{background:var(--bg2)}
+    tbody td{padding:.65rem 1.25rem;color:var(--text2);vertical-align:middle}
+    tbody td:first-child{text-align:center;font-size:.75rem;font-weight:700;color:var(--text3)}
+    .td-bold{font-weight:600;color:var(--text)}
+    .badge{display:inline-flex;align-items:center;gap:.28rem;padding:.18rem .6rem;border-radius:5px;font-size:.67rem;font-weight:600}
+    .b-red{background:var(--red-soft);color:#b91c1c}
+    .b-orange{background:var(--orange-soft);color:#92400e}
+    .b-blue{background:var(--blue-soft);color:#1e40af}
+    .b-gray{background:var(--bg3);color:var(--text2)}
+    .bd{width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block}
+
+    /* TEAM */
+    .team-sec{opacity:0;transform:translateY(14px);animation:fu .6s .85s ease forwards;margin-bottom:2.5rem}
+    .sec-lbl{font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:1rem;display:flex;align-items:center;gap:.75rem}
+    .sec-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
+    .team-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+    .team-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:1.2rem 1.4rem;display:flex;align-items:center;gap:1rem;transition:box-shadow .2s,transform .2s}
+    .team-card:hover{box-shadow:var(--sh2);transform:translateY(-2px)}
+    .av{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:1.1rem;color:#fff;flex-shrink:0}
+    .av-a{background:linear-gradient(135deg,#1a56db,#0e3a8c)}
+    .av-b{background:linear-gradient(135deg,#d97706,#92400e)}
+    .tm-name{font-size:.9rem;font-weight:600;color:var(--text);margin-bottom:.15rem}
+    .tm-role{font-size:.74rem;color:var(--text3);line-height:1.4}
+    .tm-tag{display:inline-block;margin-top:.4rem;font-size:.61rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--blue);background:var(--blue-soft);border-radius:4px;padding:.15rem .5rem}
+
+    footer{border-top:1px solid var(--border);padding:1.75rem 2.5rem;text-align:center}
+    .ft-inner{max-width:1160px;margin:0 auto}
+    .ft-text{font-size:.74rem;color:var(--text3);line-height:1.8}
+    .ft-text a{color:var(--blue);text-decoration:none}
+    .ft-text a:hover{text-decoration:underline}
+    .ft-names{margin-top:.35rem;font-size:.72rem;color:var(--text3)}
+    .ft-names strong{color:var(--text2)}
+
+    @media(max-width:920px){
+      .kpi-grid{grid-template-columns:repeat(2,1fr)}
+      .g2{grid-template-columns:1fr}
+      .team-grid{grid-template-columns:1fr}
+      .hero h1{font-size:2.1rem}
+    }
+    @media(max-width:540px){
+      .hero,.content{padding-left:1.25rem;padding-right:1.25rem}
+      nav,footer{padding-left:1.25rem;padding-right:1.25rem}
+      .kpi-grid{grid-template-columns:1fr 1fr;gap:.75rem}
+      .hero h1{font-size:1.75rem}
+    }
+  </style>
+</head>
+<body>
+
+<div id="loader">
+  <div class="ld-logo">Barranquilla <span>Transit</span></div>
+  <div class="ld-bar"><div class="ld-fill"></div></div>
+</div>
+
+
+
+<div class="hero">
+
+  <h1>Accidentalidad en<br><em>Barranquilla</em></h1>
+  <p class="hero-desc">Análisis de vehículos involucrados en accidentes de tránsito. Datos provistos por <a href="https://www.datos.gov.co/Transporte/Accidentalidad-Barranquilla-detalle-de-Veh-culos/nfa3-wgxy/about_data" target="_blank">datos.gov.co</a> mediante la API Socrata (SODA).</p>
+</div>
+
+<div class="content">
+  <div id="err-box"></div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi k1"><div class="kpi-ico">📋</div><div class="kpi-lbl">Total Registros</div><div class="kpi-num" id="kv1">—</div><div class="kpi-sub">Incidentes documentados</div></div>
+    <div class="kpi k2"><div class="kpi-ico">🚗</div><div class="kpi-lbl">Tipos de Vehículo</div><div class="kpi-num" id="kv2">—</div><div class="kpi-sub">Categorías distintas</div></div>
+  </div>
+
+  <!-- Charts row -->
+  <div class="g2">
+    <div class="cc">
+      <div class="cc-head">
+        <div><div class="cc-ey">Análisis de Vehículos</div><div class="cc-title">Accidentes por Tipo de Vehículo</div></div>
+        <div class="cc-pill" id="pill-veh">—</div>
+      </div>
+      <div class="cc-body"><div id="chartVeh"></div></div>
+    </div>
+    <div class="cc">
+      <div class="cc-head">
+        <div><div class="cc-ey">Severidad</div><div class="cc-title" id="grav-title">Distribución por Gravedad</div><div class="cc-sub" id="grav-sub">.</div></div>
+        <div class="cc-pill" id="pill-grav">—</div>
+      </div>
+      <div class="cc-body"><div id="chartGrav"></div></div>
+    </div>
+  </div>
+
+  <!-- Records with scrollable table -->
+  <div class="rec-card">
+    <div class="cc-head">
+      <div><div class="cc-ey">Registros</div><div class="cc-title">Listado de Incidentes Recientes</div></div>
+      <div class="cc-pill" id="pill-tbl">Cargando…</div>
+    </div>
+    <div class="rec-scroll">
+      <table>
+        <thead id="t-head"></thead>
+        <tbody id="t-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Team -->
+  <div class="team-sec">
+    <div class="sec-lbl">Realizado por</div>
+    <div class="team-grid">
+      <div class="team-card"><div class="av av-a">K</div><div><div class="tm-name">Keiner Fontalvo</div><div class="tm-tag">Tecnologías Web</div></div></div>
+      <div class="team-card"><div class="av av-b">OL</div><div><div class="tm-name">Oscar Llanos</div><div class="tm-tag">Tecnologías Web</div></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API='https://www.datos.gov.co/resource/nfa3-wgxy.json';
+const MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+const KNOWN={
+  vehicleType:['tipo_vehiculo','clase_vehiculo','vehiculo','clase'],
+  year:['a_o','anio','year','a_o_accidente','a_o_del_accidente'],
+  month:['mes','month','mes_accidente','numero_mes'],
+  severity:['gravedad','clase_gravedad','tipo_gravedad'],
+  accidentType:['clase_accidente','tipo_accidente'],
+  neighborhood:['barrio','localidad','sector','comuna'],
+};
+
+const LABELS={
+  tipo_vehiculo:'Tipo Vehículo',clase_vehiculo:'Clase Vehículo',
+  clase_accidente:'Clase Accidente',tipo_accidente:'Tipo Accidente',
+  gravedad:'Gravedad',clase_gravedad:'Gravedad',
+  a_o:'Año',anio:'Año',year:'Año',
+  mes:'Mes',month:'Mes',
+  barrio:'Barrio',localidad:'Localidad',
+  via:'Vía',hora:'Hora',comuna:'Comuna',
+  numero_radicado:'Radicado',direccion:'Dirección',
+};
+
+const PLY={paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',font:{family:"'DM Sans',sans-serif",size:12,color:'#6b7280'},showlegend:false};
+const CFG={displayModeBar:false,responsive:true};
+
+async function go(p){const r=await fetch(API+'?'+new URLSearchParams(p));if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}
+function fmt(n){return Number(n).toLocaleString('es-CO')}
+function tick(el,n){n=parseInt(String(n).replace(/\D/g,''))||0;let v=0;const s=Math.max(1,Math.ceil(n/80));const iv=setInterval(()=>{v=Math.min(v+s,n);el.textContent=fmt(v);if(v>=n)clearInterval(iv);},14);}
+function findF(keys,list){const lk=keys.map(k=>k.toLowerCase());for(const a of list){const i=lk.findIndex(k=>k===a||k.startsWith(a));if(i>=0)return keys[i];}return null;}
+function noData(id,msg){const el=document.getElementById(id);if(el)el.innerHTML=`<div class="no-data">${msg||'Campo no disponible en el dataset'}</div>`;}
+function labelFor(k){return LABELS[k.toLowerCase()]||k.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());}
+function sevBadge(v){const lc=(v||'').toLowerCase();let c='b-gray';if(lc.includes('muert')||lc.includes('fatal'))c='b-red';else if(lc.includes('herid'))c='b-orange';else if(lc.includes('da')||lc.includes('solo'))c='b-blue';return `<span class="badge ${c}"><span class="bd"></span>${v}</span>`;}
+
+async function init(){
+  try{
+    const sample=await go({'$limit':5});
+    if(!sample.length)throw new Error('Dataset vacío');
+    const KEYS=Object.keys(sample[0]);
+    const F={};
+    for(const[role,list] of Object.entries(KNOWN))F[role]=findF(KEYS,list);
+
+    const jobs=[
+      go({'$select':'count(*) as n','$limit':1}),
+      go({'$limit':500,'$order':':id DESC'}),
+      F.vehicleType?go({'$select':`${F.vehicleType},count(*) as cnt`,'$group':F.vehicleType,'$order':'cnt DESC','$limit':10}):null,
+      F.severity?go({'$select':`${F.severity},count(*) as cnt`,'$group':F.severity,'$order':'cnt DESC','$limit':10}):null,
+      F.accidentType?go({'$select':`${F.accidentType},count(*) as cnt`,'$group':F.accidentType,'$order':'cnt DESC','$limit':10}):null,
+      F.year?go({'$select':`${F.year},count(*) as cnt`,'$group':F.year,'$order':F.year,'$limit':50}):null,
+      F.month?go({'$select':`${F.month},count(*) as cnt`,'$group':F.month,'$order':F.month,'$limit':12}):null,
+    ];
+
+    const[ctRes,rows,vehRes,gravRes,atRes,anRes,mesRes]=await Promise.all(jobs.map(j=>j||Promise.resolve(null)));
+
+    document.getElementById('loader').classList.add('hide');
+
+    // KPI 1
+    const total=parseInt(ctRes[0]?.n||rows.length);
+    tick(document.getElementById('kv1'),total);
+
+    // KPI 2
+    if(vehRes){document.getElementById('kv2').textContent=vehRes.length;}
+    else{const u=[...new Set(rows.map(r=>r[F.vehicleType]).filter(Boolean))];document.getElementById('kv2').textContent=u.length||'—';}
+
+    // KPI 3 — Período
+    if(anRes&&anRes.length){
+      const yrs=anRes.map(r=>parseInt(r[F.year]||0)).filter(v=>v>1900&&v<2100);
+      if(yrs.length){const mn=Math.min(...yrs),mx=Math.max(...yrs);document.getElementById('kv3').textContent=mn===mx?String(mn):`${mn}–${mx}`;}
+    } else if(rows.length&&F.year){
+      const yrs=[...new Set(rows.map(r=>parseInt(r[F.year]||0)).filter(v=>v>1900&&v<2100))];
+      if(yrs.length){const mn=Math.min(...yrs),mx=Math.max(...yrs);document.getElementById('kv3').textContent=mn===mx?String(mn):`${mn}–${mx}`;}
+    }
+
+    // KPI 4 — Mes más crítico
+    if(mesRes&&mesRes.length){
+      const top=[...mesRes].sort((a,b)=>parseInt(b.cnt)-parseInt(a.cnt))[0];
+      const idx=parseInt(top?.[F.month]||0)-1;
+      document.getElementById('kv4').textContent=(idx>=0&&idx<12)?MESES[idx]:(top?.[F.month]||'—');
+    } else if(rows.length&&F.month){
+      const cnt={};
+      rows.forEach(r=>{const m=r[F.month];if(m)cnt[m]=(cnt[m]||0)+1;});
+      const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];
+      if(top){const idx=parseInt(top[0])-1;document.getElementById('kv4').textContent=(idx>=0&&idx<12)?MESES[idx]:top[0];}
+    }
+
+    // Chart 1: Vehicles
+    if(vehRes&&vehRes.length){
+      const labels=vehRes.map(r=>{let v=(r[F.vehicleType]||'Sin especificar').toString();return v.length>28?v.slice(0,26)+'…':v;});
+      const vals=vehRes.map(r=>parseInt(r.cnt||0));
+      const h=Math.max(280,labels.length*40+60);
+      Plotly.newPlot('chartVeh',[{type:'bar',orientation:'h',x:vals,y:labels,
+        marker:{color:vals.map((_,i)=>`hsl(220,${72-i*4}%,${30+i*5}%)`)},
+        text:vals.map(fmt),textposition:'outside',cliponaxis:false,
+        hovertemplate:'<b>%{y}</b><br>%{x:,}<extra></extra>',
+      }],{...PLY,height:h,margin:{t:8,b:30,l:185,r:70},
+        xaxis:{gridcolor:'#f0f2f5',zerolinecolor:'#e8eaed',tickfont:{size:11}},
+        yaxis:{autorange:'reversed',gridcolor:'#f0f2f5',tickfont:{size:12}},
+      },CFG);
+      document.getElementById('pill-veh').textContent=`Top ${labels.length}`;
+    } else noData('chartVeh');
+
+    // Chart 2: Severity or accident type
+    const pieData=gravRes||atRes;
+    const pieField=gravRes?F.severity:F.accidentType;
+    if(pieData&&pieData.length&&pieField){
+      if(!gravRes){document.getElementById('grav-title').textContent='Distribución por Clase de Accidente';}
+      const gl=pieData.map(r=>(r[pieField]||'Sin especificar').toString());
+      const gv=pieData.map(r=>parseInt(r.cnt||0));
+      const gc=['#1a56db','#dc2626','#d97706','#059669','#7c3aed','#0891b2','#be123c','#ca8a04','#0f766e','#374151'];
+      Plotly.newPlot('chartGrav',[{type:'pie',hole:.48,labels:gl,values:gv,
+        marker:{colors:gc,line:{color:'#fff',width:2}},
+        textinfo:'percent',textfont:{size:11},
+        hovertemplate:'<b>%{label}</b><br>%{value:,} — %{percent}<extra></extra>',
+      }],{...PLY,height:300,showlegend:true,
+        legend:{orientation:'v',x:1.02,y:.5,font:{size:11},bgcolor:'rgba(0,0,0,0)'},
+        margin:{t:10,b:10,l:10,r:140},
+      },CFG);
+      document.getElementById('pill-grav').textContent=`${gl.length} categorías`;
+    } else noData('chartGrav');
+
+    // Table with scroll
+    if(rows.length){
+      const priority=['tipo_vehiculo','clase_vehiculo','clase_accidente','tipo_accidente','gravedad','clase_gravedad','a_o','anio','mes','month','barrio','localidad','via','hora','comuna','direccion'];
+      const shown=[];
+      for(const p of priority){const k=KEYS.find(k=>k.toLowerCase()===p);if(k&&!shown.includes(k))shown.push(k);if(shown.length>=7)break;}
+      for(const k of KEYS){if(!shown.includes(k)&&shown.length<7)shown.push(k);}
+
+      const isSevF=k=>{const l=k.toLowerCase();return l.includes('gravedad')||l.includes('clase_acc')||l.includes('tipo_acc');};
+      const isMesF=k=>{const l=k.toLowerCase();return l==='mes'||l==='month';};
+
+      document.getElementById('t-head').innerHTML=
+        '<tr><th>#</th>'+shown.map(k=>`<th>${labelFor(k)}</th>`).join('')+'</tr>';
+
+      document.getElementById('t-body').innerHTML=rows.slice(0,200).map((row,i)=>
+        `<tr><td>${i+1}</td>`+shown.map(k=>{
+          const raw=row[k];
+          const val=raw!=null&&raw!==''?String(raw):'—';
+          if(isSevF(k))return `<td>${sevBadge(val)}</td>`;
+          if(isMesF(k)){const idx=parseInt(val)-1;return `<td>${(idx>=0&&idx<12)?MESES[idx]:val}</td>`;}
+          if(k.toLowerCase().includes('a_o')||k.toLowerCase()==='anio'||k.toLowerCase()==='year')return `<td class="td-bold">${val}</td>`;
+          return `<td>${val}</td>`;
+        }).join('')+'</tr>'
+      ).join('');
+
+      document.getElementById('pill-tbl').textContent=`200 de ${fmt(total)} registros`;
+    }
+
+  }catch(e){
+    document.getElementById('loader').classList.add('hide');
+    const eb=document.getElementById('err-box');
+    eb.style.display='block';
+    eb.innerHTML=`<strong>Error al cargar los datos</strong><br><span style="opacity:.7;font-size:.8rem">${e}</span>`;
+  }
+}
+
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
