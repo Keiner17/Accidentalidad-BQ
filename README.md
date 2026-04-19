@@ -46,8 +46,8 @@ No requiere servidor, base de datos ni dependencias externas más allá de la li
 
 | Tecnología | Uso |
 |---|---|
-| HTML5 / CSS3 | Estructura, estilos y diseño responsivo |
-| JavaScript (Vanilla ES2020+) | Lógica de consumo de API, procesamiento de datos y renderizado |
+| HTML5| Estructura, estilos y diseño responsivo |
+| JavaScript  | Lógica de consumo de API, procesamiento de datos y renderizado |
 | [Plotly.js 2.27](https://plotly.com/javascript/) | Gráficas interactivas (barras y dona) |
 | [API Socrata (SODA)](https://dev.socrata.com/) | Fuente de datos de accidentalidad |
 | Google Fonts | Tipografías DM Sans y DM Serif Display |
