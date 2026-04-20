@@ -2,7 +2,7 @@
 
 Dashboard de análisis de vehículos involucrados en accidentes de tránsito en Barranquilla, construido con HTML, CSS y JavaScript vanilla. Los datos son consumidos en tiempo real desde el portal oficial de datos abiertos del gobierno colombiano.
 <img width="1366" height="651" alt="image" src="https://github.com/user-attachments/assets/792f7c16-6122-4517-bee5-d23bf449bacd" />
-<img width="1366" height="651" alt="image" src="https://github.com/user-attachments/assets/df691c87-4eaf-423c-82c9-53ce265b3d43" />
+
 <img width="1366" height="651" alt="image" src="https://github.com/user-attachments/assets/17cd9f5a-bb44-4bb2-b6c1-ca5037de2ff8" />
 
 ---
@@ -42,7 +42,7 @@ No requiere servidor, base de datos ni dependencias externas más allá de la li
 - **Diseño responsive:** adaptado para móvil, tablet y escritorio.
 - **Pantalla de carga:** loader animado mientras se obtienen los datos.
 - **Manejo de errores:** si la API falla, se muestra un mensaje descriptivo en pantalla.
-
+<img width="1366" height="651" alt="image" src="https://github.com/user-attachments/assets/df691c87-4eaf-423c-82c9-53ce265b3d43" />
 ---
 
 ## Tecnologías
