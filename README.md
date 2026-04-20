@@ -58,20 +58,6 @@ No requiere servidor, base de datos ni dependencias externas más allá de la li
 
 ---
 
-## Instalación
-
-El proyecto no tiene dependencias que instalar ni proceso de compilación. Solo se necesita un navegador moderno.
-
-```bash
-# 1. Clona el repositorio
-git clone https://github.com/0scar07/Api-Rest.git
-
-# 2. Entra al directorio
-cd Api-Rest
-
-# 3. Abre index.html en tu navegador
-```
-
 > **Recomendación:** usar la extensión [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) de VS Code para evitar posibles bloqueos CORS al hacer las peticiones a la API desde el sistema de archivos local.
 
 ---
@@ -84,27 +70,6 @@ Los datos provienen del dataset **Accidentalidad Barranquilla — Detalle de Veh
 - **Endpoint API:**
   ```
   https://www.datos.gov.co/resource/nfa3-wgxy.json
-  ```
-- **Protocolo:** SODA (Socrata Open Data API) — acceso público, sin autenticación requerida.
-- **Parámetros usados:**
-
-| Parámetro | Descripción |
-|---|---|
-| `$limit` | Número máximo de filas a retornar |
-| `$select` | Columnas o agregaciones a obtener |
-| `$group` | Agrupación para conteos por categoría |
-| `$order` | Orden de los resultados |
-
----
-
-## Estructura del proyecto
-
-```
-Api-Rest/
-├── index.html      # Página principal — Dashboard de accidentalidad
-├── live.html       # Página secundaria — Estadísticas en vivo
-└── README.md       # Documentación del proyecto
-```
 
 ### `index.html`
 
